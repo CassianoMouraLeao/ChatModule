@@ -1,0 +1,20 @@
+# ===== Secrets =====
+# GoogleService-Info.plist contains your Firebase API key + project IDs.
+# All other secrets (LLM tokens, etc.) live in Firebase Remote Config,
+# not in source.
+ChatModule/GoogleService-Info.plist
+
+# ===== Xcode =====
+.DS_Store
+*.xcuserstate
+xcuserdata/
+DerivedData/
+build/
+
+# ===== Swift Package Manager =====
+.swiftpm/
+Package.resolved
+
+# ===== Misc =====
+*.swp
+*.lock

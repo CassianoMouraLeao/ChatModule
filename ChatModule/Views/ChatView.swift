@@ -23,7 +23,7 @@
 
 import SwiftUI
 
-struct ChatView: View {
+public struct ChatView: View {
 
     @State private var viewModel = ChatViewModel()
 
@@ -31,7 +31,11 @@ struct ChatView: View {
     /// the floating "scroll to bottom" button.
     @State private var isAtBottom = true
 
-    var body: some View {
+    /// Public init so host apps (e.g. BTW-ios) can instantiate the chat
+    /// surface as a SwiftUI view inside their own navigation hierarchy.
+    public init() {}
+
+    public var body: some View {
         // Inline @Bindable shadow so child views can take Binding<...> for
         // selectedProvider / draftText, etc.
         @Bindable var viewModel = viewModel
