@@ -38,7 +38,17 @@ nonisolated enum Secrets {
 
     // MARK: - RemoteConfig singleton
 
-    private static let remoteConfig: RemoteConfig = {
+    // `nonisolated(unsafe)` tells the Swift 6 strict-concurrency checker we
+    // accept responsibility for the thread-safety of this stored property.
+    // It's safe because:
+    //   • Firebase's RemoteConfig.remoteConfig() returns an internally
+    //     thread-safe singleton — reads/writes are guarded inside the SDK.
+    //   • We only call its read-only API (configValue(forKey:)) after the
+    //     async fetchAndActivate() finishes, and Firebase serialises that.
+    // Without this annotation the project fails to build under
+    // SWIFT_APPROACHABLE_CONCURRENCY = YES because RemoteConfig isn't yet
+    // marked Sendable in the Firebase iOS SDK.
+    nonisolated(unsafe) private static let remoteConfig: RemoteConfig = {
         let rc = RemoteConfig.remoteConfig()
         // Defaults are used before the first successful fetch. Empty string
         // makes OpenAIService throw a clear "missing API key" error rather
