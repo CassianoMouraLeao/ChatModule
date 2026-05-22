@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 //
 // ChatModule — Swift Package
 //
@@ -47,6 +47,17 @@ let package = Package(
                 "ContentView.swift",
                 "GoogleService-Info.plist",
                 "Assets.xcassets"
+            ],
+            swiftSettings: [
+                // Compile this package with MainActor as the DEFAULT actor
+                // isolation — mirroring the standalone app's build setting
+                // SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor.
+                //
+                // Without this, ChatViewModel / SwiftUI glue would be
+                // `nonisolated` when built as a package, which breaks the
+                // concurrency model the whole module was written against
+                // (e.g. the unstructured Task in sendMessage capturing self).
+                .defaultIsolation(MainActor.self)
             ]
         )
     ]

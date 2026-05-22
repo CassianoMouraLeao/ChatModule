@@ -18,7 +18,12 @@
 import Foundation
 import FirebaseAI
 
-nonisolated struct GeminiFirebaseService: LLMService {
+// `@unchecked Sendable` — LLMService now requires Sendable. This struct holds
+// a FirebaseAI `GenerativeModel`, which isn't (yet) annotated Sendable in the
+// SDK. The opt-out is safe: `model` is an immutable `let`, set once at init,
+// and Firebase's GenerativeModel is internally thread-safe for the async
+// generate/chat calls we make.
+nonisolated struct GeminiFirebaseService: LLMService, @unchecked Sendable {
 
     /// The Gemini model used for generation.
     /// `gemini-2.5-flash` is the recommended default — fast, multimodal,

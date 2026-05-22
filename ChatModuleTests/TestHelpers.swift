@@ -16,7 +16,10 @@ import XCTest
 
 /// A no-op LLMService that returns a canned result (success or failure).
 /// Lets ChatViewModel tests run deterministically without network or delays.
-struct StubLLMService: LLMService {
+/// `@unchecked Sendable` — LLMService requires Sendable; this holds a
+/// `Result<String, Error>` whose `Error` existential isn't Sendable. Safe for
+/// a test stub: all fields are immutable `let`s set once at init.
+struct StubLLMService: LLMService, @unchecked Sendable {
     let result: Result<String, Error>
     let delayNanos: UInt64
 

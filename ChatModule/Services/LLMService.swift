@@ -15,7 +15,12 @@
 
 import Foundation
 
-nonisolated protocol LLMService {
+// `Sendable` so a concrete service can be safely captured by the unstructured
+// Task in ChatViewModel.sendMessage() — without it, Swift 6 strict concurrency
+// rejects the capture as a potential data race ("passing closure as a
+// 'sending' parameter"). Services do async network work, so being Sendable is
+// the correct model anyway.
+nonisolated protocol LLMService: Sendable {
     /// Sends the user's prompt to the LLM and returns the assistant reply.
     /// Throwing errors propagate to the UI as an inline error bubble.
     func sendMessage(_ prompt: String, history: [ChatMessage]) async throws -> String
