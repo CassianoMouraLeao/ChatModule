@@ -48,7 +48,13 @@ final class ChatViewModel {
 
     /// Default routing per provider. Each provider returns its real service
     /// implementation — no more placeholders.
-    private static let defaultServiceFactory: (LLMProvider) -> LLMService = { provider in
+    ///
+    /// `nonisolated(unsafe)` — the closure type `(LLMProvider) -> LLMService`
+    /// isn't `Sendable`, which trips strict concurrency on a `static let`.
+    /// It's safe here: the property is an immutable `let`, the closure
+    /// captures nothing, and it only constructs fresh value-type services on
+    /// each call — there is no shared mutable state.
+    nonisolated(unsafe) private static let defaultServiceFactory: (LLMProvider) -> LLMService = { provider in
         switch provider {
         case .google:
             return GeminiFirebaseService()
